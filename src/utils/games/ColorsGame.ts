@@ -13,7 +13,7 @@ class ColorsGame extends AbstractGame<{
   rightAnswers: number,
   expiresAt: number
 }> {
-  private _meta: [number, number];
+  private _meta: [number, number] = [ 0, 0 ];
 
   constructor(){
     super( {
@@ -21,8 +21,6 @@ class ColorsGame extends AbstractGame<{
       rightAnswers: 0,
       expiresAt: Math.floor( Date.now() / 1000 ) + 20
     } );
-
-    this._meta = [ 0, 0 ];
   }
 
   generateLevel(): [null, any] | [number, null]{
@@ -46,8 +44,8 @@ class ColorsGame extends AbstractGame<{
       color3Hex: hslToHexSimple( color1 + offset )
     };
 
-    this.state.status = "generated";
     this._meta = [ color0, color0 + offset ];
+    this.state.status = "generated";
 
     return [ null, data ];
   }
@@ -65,7 +63,7 @@ class ColorsGame extends AbstractGame<{
     const delta = Math.abs( color0 - color0Shifted );
 
     if( delta < 5 === answer ){
-      this._state.rightAnswers++;
+      this.state.rightAnswers++;
     }
 
     this.state.status = "idle";

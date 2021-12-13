@@ -1,7 +1,9 @@
 import { ColorsGame } from "./ColorsGame";
+import { CenterGame } from "./CenterGame";
 
 const games = {
-  colors: ColorsGame
+  colors: ColorsGame,
+  center: CenterGame
 };
 
 function makeGame( game: keyof typeof games ){

@@ -1,13 +1,23 @@
 {
-  "name": "server",
-  "version": "1.0.0",
-  "description": "",
+  "name": "mfcg-server",
+  "version": "0.0.1",
+  "description": "Merry fucking Christmas games server",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "npx tsc -w",
+    "build": "npx tsc",
+    "start": "node build/server"
   },
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DevelopFroZo/mfcg-server.git"
+  },
+  "author": "na",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DevelopFroZo/mfcg-server/issues"
+  },
+  "homepage": "https://github.com/DevelopFroZo/mfcg-server#readme",
   "devDependencies": {
     "@types/node": "^16.11.12",
     "typescript": "^4.5.3"

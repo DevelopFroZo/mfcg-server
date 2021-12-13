@@ -3,7 +3,7 @@ interface DefaultState {
 }
 
 abstract class AbstractGame<T extends Record<string, any>, R = DefaultState & T> {
-  protected _state: R;
+  private _state: R;
 
   constructor( state: R ){
     this._state = state;
