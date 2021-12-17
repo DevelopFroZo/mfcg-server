@@ -27,12 +27,22 @@ async function index(){
 
     console.log( `[C] ${socketId}` );
 
-    socket.on( "initialize", ( gameName, cb ) => {
+    socket.on( "initialize", ( gameName, isNew, cb ) => {
       console.log( `  [I]` );
 
-      games[ socketId ] = makeGame( gameName );
+      let game;
 
-      cb( games[ socketId ].state );
+      // TODO MAKE SET
+      if( isNew || !( socketId in games ) ){
+        game = makeGame( gameName );
+        games[ socketId ] = game;
+      } else {
+        game = games[ socketId ];
+      }
+
+      game.initialize();
+
+      cb( game.status, game.state );
     } );
 
     socket.on( "generateLevel", cb => {
@@ -41,7 +51,7 @@ async function index(){
       const game = games[ socketId ];
       const [ error, data ] = game.generateLevel();
 
-      cb( data, game.state );
+      cb( data, game.status, game.state );
     } );
 
     socket.on( "checkAnswer", ( answer, cb ) => {
@@ -49,7 +59,7 @@ async function index(){
 
       const error = game.checkAnswer( answer );
 
-      cb( game.state );
+      cb( game.status, game.state );
     } );
 
     socket.on( "end", cb => {
@@ -57,7 +67,7 @@ async function index(){
 
       game.end();
 
-      cb( game.state );
+      cb( game.status, game.state );
     } );
 
     socket.on( "disconnect", () => {

@@ -5,15 +5,22 @@ class CenterGame extends AbstractGame<{
 }> {
   private _meta: number = 0;
 
-  constructor(){
-    super( {
-      status: "idle",
+  initialize(): number | null{
+    if( this.status !== "initialize" && this.status !== "end" ){
+      return 1;
+    }
+
+    this.status = "idle";
+
+    this.state = {
       rightAnswers: 0
-    } );
+    };
+
+    return null;
   }
 
   generateLevel(): [null, any] | [number, null]{
-    if( this.state.status !== "idle" ){
+    if( this.status !== "idle" ){
       return [ 1, null ];
     }
 
@@ -23,13 +30,13 @@ class CenterGame extends AbstractGame<{
     };
 
     this._meta = Math.sqrt( Math.pow( data.xOffset, 2 ) + Math.pow( data.yOffset, 2 ) );
-    this.state.status = "generated";
+    this.status = "generated";
 
     return [ null, data ];
   }
 
   checkAnswer( answer: boolean ): null | number{
-    if( this.state.status !== "generated" ){
+    if( this.status !== "generated" ){
       return 1;
     }
 
@@ -37,18 +44,10 @@ class CenterGame extends AbstractGame<{
       this.state.rightAnswers++;
     }
 
-    this.state.status = "idle";
+    this.status = "idle";
 
     return null;
   }
-
-  end(): void{
-    this.state.status = "end";
-  }
-
-  // checkAnswer( answer: boolean ): number | null{
-  //   //
-  // }
 }
 
 export { CenterGame };

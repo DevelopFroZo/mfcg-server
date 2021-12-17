@@ -15,16 +15,23 @@ class ColorsGame extends AbstractGame<{
 }> {
   private _meta: [number, number] = [ 0, 0 ];
 
-  constructor(){
-    super( {
-      status: "idle",
+  initialize(): number | null{
+    if( this.status !== "initialize" && this.status !== "end" ){
+      return 1;
+    }
+
+    this.status = "idle";
+
+    this.state = {
       rightAnswers: 0,
       expiresAt: Math.floor( Date.now() / 1000 ) + 20
-    } );
+    };
+
+    return null;
   }
 
   generateLevel(): [null, any] | [number, null]{
-    if( this.state.status !== "idle" ){
+    if( this.status !== "idle" ){
       return [ 1, null ];
     }
 
@@ -45,13 +52,13 @@ class ColorsGame extends AbstractGame<{
     };
 
     this._meta = [ color0, color0 + offset ];
-    this.state.status = "generated";
+    this.status = "generated";
 
     return [ null, data ];
   }
 
   checkAnswer( answer: boolean ): null | number{
-    if( this.state.status !== "generated" ){
+    if( this.status !== "generated" ){
       return 1;
     }
 
@@ -66,13 +73,9 @@ class ColorsGame extends AbstractGame<{
       this.state.rightAnswers++;
     }
 
-    this.state.status = "idle";
+    this.status = "idle";
 
     return null;
-  }
-
-  end(): void{
-    this.state.status = "ended";
   }
 }
 

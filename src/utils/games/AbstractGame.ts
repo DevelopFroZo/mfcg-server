@@ -1,23 +1,32 @@
-interface DefaultState {
-  status: string
-}
+abstract class AbstractGame<T extends Record<string, any>> {
+  private _status: string = "initialize";
+  private _state: T = {} as T;
 
-abstract class AbstractGame<T extends Record<string, any>, R = DefaultState & T> {
-  private _state: R;
+  get status(): string{
+    return this._status;
+  }
 
-  constructor( state: R ){
+  get state(): T{
+    return this._state;
+  }
+
+  set status( status: string ){
+    this._status = status;
+  }
+
+  set state( state: T ){
     this._state = state;
   }
 
-  get state(): R{
-    return this._state;
-  }
+  abstract initialize(): null | number;
 
   abstract generateLevel(): [null, any] | [number, null];
 
   abstract checkAnswer( answer: boolean ): null | number;
 
-  abstract end(): void;
+  end(): void{
+    this.status = "ended";
+  };
 }
 
 export { AbstractGame };
