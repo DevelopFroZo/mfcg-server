@@ -1,26 +1,10 @@
 import { AbstractGame } from "./AbstractGame";
 
-class CenterGame extends AbstractGame<{
-  rightAnswers: number
-}> {
+class CenterGame extends AbstractGame {
   private _meta: number = 0;
 
-  initialize(): number | null{
-    if( this.status !== "initialize" && this.status !== "end" ){
-      return 1;
-    }
-
-    this.status = "idle";
-
-    this.state = {
-      rightAnswers: 0
-    };
-
-    return null;
-  }
-
   generateLevel(): [null, any] | [number, null]{
-    if( this.status !== "idle" ){
+    if( this.state.status !== "idle" ){
       return [ 1, null ];
     }
 
@@ -30,13 +14,13 @@ class CenterGame extends AbstractGame<{
     };
 
     this._meta = Math.sqrt( Math.pow( data.xOffset, 2 ) + Math.pow( data.yOffset, 2 ) );
-    this.status = "generated";
+    this.state.status = "generated";
 
     return [ null, data ];
   }
 
   checkAnswer( answer: boolean ): null | number{
-    if( this.status !== "generated" ){
+    if( this.state.status !== "generated" ){
       return 1;
     }
 
@@ -44,7 +28,7 @@ class CenterGame extends AbstractGame<{
       this.state.rightAnswers++;
     }
 
-    this.status = "idle";
+    this.state.status = "idle";
 
     return null;
   }

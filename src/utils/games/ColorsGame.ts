@@ -9,29 +9,17 @@ function randInt( min: number, max: number ): number{
   return result;
 }
 
-class ColorsGame extends AbstractGame<{
-  rightAnswers: number,
-  expiresAt: number
-}> {
+class ColorsGame extends AbstractGame {
   private _meta: [number, number] = [ 0, 0 ];
 
-  initialize(): number | null{
-    if( this.status !== "initialize" && this.status !== "end" ){
-      return 1;
-    }
-
-    this.status = "idle";
-
-    this.state = {
-      rightAnswers: 0,
-      expiresAt: Math.floor( Date.now() / 1000 ) + 20
-    };
-
-    return null;
+  constructor(){
+    super( {
+      expiresIn: 5
+    } );
   }
 
   generateLevel(): [null, any] | [number, null]{
-    if( this.status !== "idle" ){
+    if( this.state.status !== "idle" ){
       return [ 1, null ];
     }
 
@@ -52,13 +40,13 @@ class ColorsGame extends AbstractGame<{
     };
 
     this._meta = [ color0, color0 + offset ];
-    this.status = "generated";
+    this.state.status = "generated";
 
     return [ null, data ];
   }
 
   checkAnswer( answer: boolean ): null | number{
-    if( this.status !== "generated" ){
+    if( this.state.status !== "generated" ){
       return 1;
     }
 
@@ -73,7 +61,7 @@ class ColorsGame extends AbstractGame<{
       this.state.rightAnswers++;
     }
 
-    this.status = "idle";
+    this.state.status = "idle";
 
     return null;
   }

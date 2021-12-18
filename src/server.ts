@@ -17,7 +17,7 @@ async function index(){
     }
   } );
 
-  const games: Record<string, AbstractGame<any>> = {};
+  const games: Record<string, AbstractGame> = {};
   let usersCount = 0;
 
   io.on( "connect", socket => {
@@ -41,8 +41,9 @@ async function index(){
       }
 
       game.initialize();
+      console.log( game.state );
 
-      cb( game.status, game.state );
+      cb( game.state );
     } );
 
     socket.on( "generateLevel", cb => {
@@ -51,7 +52,7 @@ async function index(){
       const game = games[ socketId ];
       const [ error, data ] = game.generateLevel();
 
-      cb( data, game.status, game.state );
+      cb( data, game.state );
     } );
 
     socket.on( "checkAnswer", ( answer, cb ) => {
@@ -59,7 +60,7 @@ async function index(){
 
       const error = game.checkAnswer( answer );
 
-      cb( game.status, game.state );
+      cb( game.state );
     } );
 
     socket.on( "end", cb => {
@@ -67,7 +68,7 @@ async function index(){
 
       game.end();
 
-      cb( game.status, game.state );
+      cb( game.state );
     } );
 
     socket.on( "disconnect", () => {
