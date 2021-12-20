@@ -2,14 +2,15 @@ interface State {
   status: string,
   startAt: number,
   endAt: number,
-  rightAnswers: number,
+  answers: number,
+  score: number,
   expiresAt?: number,
-  totalLevels?: number
+  totalScore?: number
 }
 
-interface Q {
+interface Options {
   expiresIn?: number,
-  totalLevels?: number
+  totalScore?: number
 }
 
 abstract class AbstractGame {
@@ -19,15 +20,16 @@ abstract class AbstractGame {
     status: "created",
     startAt: 0,
     endAt: 0,
-    rightAnswers: 0
+    answers: 0,
+    score: 0
   };
 
   constructor( {
     expiresIn,
-    totalLevels
-  }: Q = {} ){
+    totalScore
+  }: Options = {} ){
     this._expiresIn = expiresIn;
-    this._state.totalLevels = totalLevels;
+    this._state.totalScore = totalScore;
   }
 
   get state(): State{
@@ -43,7 +45,7 @@ abstract class AbstractGame {
 
     this._state.status = "idle";
     this._state.startAt = startAt;
-    this._state.rightAnswers = 0;
+    this._state.score = 0;
 
     if( this._expiresIn ){
       this._state.expiresAt = startAt + this._expiresIn;

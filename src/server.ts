@@ -41,7 +41,6 @@ async function index(){
       }
 
       game.initialize();
-      console.log( game.state );
 
       cb( game.state );
     } );

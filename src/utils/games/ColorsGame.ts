@@ -14,7 +14,8 @@ class ColorsGame extends AbstractGame {
 
   constructor(){
     super( {
-      expiresIn: 5
+      expiresIn: 30,
+      totalScore: 20
     } );
   }
 
@@ -23,8 +24,12 @@ class ColorsGame extends AbstractGame {
       return [ 1, null ];
     }
 
-    if( this.state.expiresAt && Math.floor( Date.now() / 1000 ) >= this.state.expiresAt ){
+    if( this.state.totalScore && this.state.answers === this.state.totalScore ){
       return [ 2, null ];
+    }
+
+    if( this.state.expiresAt && Math.floor( Date.now() / 1000 ) >= this.state.expiresAt ){
+      return [ 3, null ];
     }
 
     const diff = 10;
@@ -50,17 +55,22 @@ class ColorsGame extends AbstractGame {
       return 1;
     }
 
-    if( this.state.expiresAt && Math.floor( Date.now() / 1000 ) >= this.state.expiresAt ){
+    if( this.state.totalScore && this.state.answers === this.state.totalScore ){
       return 2;
+    }
+
+    if( this.state.expiresAt && Math.floor( Date.now() / 1000 ) >= this.state.expiresAt ){
+      return 3;
     }
 
     const [ color0, color0Shifted ] = this._meta;
     const delta = Math.abs( color0 - color0Shifted );
 
     if( delta < 5 === answer ){
-      this.state.rightAnswers++;
+      this.state.score++;
     }
 
+    this.state.answers++;
     this.state.status = "idle";
 
     return null;

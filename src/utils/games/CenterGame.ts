@@ -25,10 +25,11 @@ class CenterGame extends AbstractGame {
     }
 
     if( this._meta < .6 === answer ){
-      this.state.rightAnswers++;
+      this.state.score++;
+      this.state.status = "idle";
+    } else {
+      this.state.status = "ended";
     }
-
-    this.state.status = "idle";
 
     return null;
   }
