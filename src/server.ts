@@ -1,5 +1,6 @@
 import { createServer } from "http";
 
+import express from "express";
 import { Server as SocketIoServer } from "socket.io";
 
 import { AbstractGame } from "./utils/games/AbstractGame";
@@ -9,7 +10,8 @@ async function index(){
   const PORT = process.argv[2] || 3001;
   const NODE_ENV = process.argv[3] || "development";
 
-  const server = createServer();
+  const app = express();
+  const server = createServer( app );
 
   const io = new SocketIoServer( server, {
     cors: {
@@ -19,6 +21,12 @@ async function index(){
 
   const games: Record<string, AbstractGame> = {};
   let usersCount = 0;
+
+  app.get( "/", ( req, res ) => {
+    res.json( {
+      v: "1.0.0"
+    } );
+  } );
 
   io.on( "connect", socket => {
     const socketId = socket.id;
