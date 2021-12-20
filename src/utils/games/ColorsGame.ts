@@ -1,21 +1,14 @@
-import { hslToHexSimple } from "../hslToHex";
+import { hslToHexSimple, randInt } from "..";
 
 import { AbstractGame } from "./AbstractGame";
-
-function randInt( min: number, max: number ): number{
-  const delta = max - min;
-  const result = Math.floor( Math.random() * ( delta + 1 ) ) + min;
-
-  return result;
-}
 
 class ColorsGame extends AbstractGame {
   private _meta: [number, number] = [ 0, 0 ];
 
   constructor(){
     super( {
-      expiresIn: 30,
-      totalScore: 20
+      expiresIn: Number( process.env.GAME_COLORS_EXPIRES_IN! ),
+      totalScore: Number( process.env.GAME_COLORS_TOTAL_SCORE! )
     } );
   }
 

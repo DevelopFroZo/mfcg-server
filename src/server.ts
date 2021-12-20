@@ -1,5 +1,6 @@
 import { createServer } from "http";
 
+import dotenv from "dotenv";
 import express from "express";
 import { Server as SocketIoServer } from "socket.io";
 
@@ -9,6 +10,8 @@ import { makeGame } from "./utils/games/makeGame";
 async function index(){
   const PORT = process.argv[2] || 3001;
   const NODE_ENV = process.argv[3] || "development";
+
+  dotenv.config();
 
   const app = express();
   const server = createServer( app );
