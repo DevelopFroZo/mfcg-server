@@ -3,6 +3,12 @@ import { AbstractGame } from "./AbstractGame";
 class CenterGame extends AbstractGame {
   private _meta: number = 0;
 
+  constructor(){
+    super( {
+      controls: "yesno"
+    } );
+  }
+
   generateLevel(): [null, any] | [number, null]{
     if( this.state.status !== "idle" ){
       return [ 1, null ];

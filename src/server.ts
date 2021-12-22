@@ -25,7 +25,7 @@ async function index(){
   const games: Record<string, AbstractGame> = {};
   let usersCount = 0;
 
-  app.get( "/", ( req, res ) => {
+  app.get( "/", ( {}, res ) => {
     res.json( {
       v: "1.0.0"
     } );
@@ -53,7 +53,7 @@ async function index(){
 
       game.initialize();
 
-      cb( game.state );
+      cb( game.controls, game.state );
     } );
 
     socket.on( "generateLevel", cb => {

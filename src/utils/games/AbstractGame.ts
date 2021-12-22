@@ -9,11 +9,13 @@ interface State {
 }
 
 interface Options {
+  controls?: string,
   expiresIn?: number,
   totalScore?: number
 }
 
 abstract class AbstractGame {
+  private _controls?: string;
   private _expiresIn?: number;
 
   private _state: State = {
@@ -25,11 +27,17 @@ abstract class AbstractGame {
   };
 
   constructor( {
+    controls,
     expiresIn,
     totalScore
   }: Options = {} ){
+    this._controls = controls;
     this._expiresIn = expiresIn;
     this._state.totalScore = totalScore;
+  }
+
+  get controls(): undefined | string{
+    return this._controls;
   }
 
   get state(): State{

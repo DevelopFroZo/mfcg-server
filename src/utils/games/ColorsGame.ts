@@ -7,6 +7,7 @@ class ColorsGame extends AbstractGame {
 
   constructor(){
     super( {
+      controls: "yesno",
       expiresIn: Number( process.env.GAME_COLORS_EXPIRES_IN! ),
       totalScore: Number( process.env.GAME_COLORS_TOTAL_SCORE! )
     } );
