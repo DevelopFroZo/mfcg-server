@@ -1,11 +1,7 @@
 interface State {
   status: string,
-  startAt: number,
-  endAt: number,
   answers: number,
-  score: number,
-  expiresAt?: number,
-  totalScore?: number
+  score: number
 }
 
 interface Options {
@@ -14,17 +10,20 @@ interface Options {
   totalScore?: number
 }
 
-abstract class AbstractGame {
+abstract class AbstractGame<T = any, R = any> {
   private _controls?: string;
   private _expiresIn?: number;
+  private _expiresAt?: number;
+  private _startAt: number = 0;
+  private _endAt: number = 0;
+  private _totalScore?: number;
+  private _status: string = "created";
+  private _answers: number = 0;
+  private _score: number = 0;
 
-  private _state: State = {
-    status: "created",
-    startAt: 0,
-    endAt: 0,
-    answers: 0,
-    score: 0
-  };
+  protected abstract generateLevelNative(): T;
+
+  protected abstract checkAnswerNative( answer: R ): boolean;
 
   constructor( {
     controls,
@@ -33,42 +32,105 @@ abstract class AbstractGame {
   }: Options = {} ){
     this._controls = controls;
     this._expiresIn = expiresIn;
-    this._state.totalScore = totalScore;
+    this._totalScore = totalScore;
   }
 
-  get controls(): undefined | string{
-    return this._controls;
+  get initialState(){
+    return {
+      controls: this._controls,
+      expiresAt: this._expiresAt,
+      totalScore: this._totalScore
+    };
   }
 
-  get state(): State{
-    return this._state;
+  get state(){
+    return {
+      status: this._status,
+      answers: this._answers,
+      score: this._score
+    };
   }
 
   initialize(): null | number{
-    if( this._state.status !== "created" && this.state.status !== "ended" ){
+    if( this._status !== "created" && this._status !== "ended" ){
       return 1;
     }
 
-    const startAt = Math.floor( Date.now() / 1000 );
+    const now = Math.floor( Date.now() / 1000 );
 
-    this._state.status = "idle";
-    this._state.startAt = startAt;
-    this._state.score = 0;
+    this._startAt = now;
+    this._endAt = 0;
+    this._status = "idle";
+    this._answers = 0;
+    this._score = 0;
 
     if( this._expiresIn ){
-      this._state.expiresAt = startAt + this._expiresIn;
+      this._expiresAt = now + this._expiresIn;
+    }
+
+    return null;
+  }
+
+  generateLevel(): [null, T] | [number, null]{
+    const now = Math.floor( Date.now() / 1000 );
+
+    if( this._status !== "idle" ){
+      return [ 1, null ];
+    }
+
+    if( this._totalScore && this._answers === this._totalScore ){
+      return [ 2, null ];
+    }
+
+    if( this._expiresAt && now >= this._expiresAt ){
+      return [ 3, null ];
+    }
+
+    const data = this.generateLevelNative();
+
+    this._status = "generated";
+
+    return [ null, data ];
+  }
+
+  checkAnswer( answer: R ): null | number{
+    const now = Math.floor( Date.now() / 1000 );
+
+    if( this._status !== "generated" ){
+      return 1;
+    }
+
+    if( this._totalScore && this._answers === this._totalScore ){
+      return 2;
+    }
+
+    if( this._expiresAt && now >= this._expiresAt ){
+      return 3;
+    }
+
+    const checkAnswerResult = this.checkAnswerNative( answer );
+
+    if( checkAnswerResult ){
+      this._score++;
+    }
+
+    this._answers++;
+    
+    if( this._answers === this._totalScore ){
+      this.end();
+    } else {
+      this._status = "idle";
     }
 
     return null;
   }
 
   end(): void{
-    this._state.status = "ended";
-  };
+    const now = Math.floor( Date.now() / 1000 );
 
-  abstract generateLevel(): [null, any] | [number, null];
-
-  abstract checkAnswer( answer: boolean ): null | number;
+    this._endAt = now;
+    this._status = "ended";
+  }
 }
 
 export { AbstractGame };

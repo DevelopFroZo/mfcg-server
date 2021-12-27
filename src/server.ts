@@ -25,11 +25,9 @@ async function index(){
   const games: Record<string, AbstractGame> = {};
   let usersCount = 0;
 
-  app.get( "/", ( {}, res ) => {
-    res.json( {
-      v: "1.0.0"
-    } );
-  } );
+  app.use(
+    express.static( "static" )
+  );
 
   io.on( "connect", socket => {
     const socketId = socket.id;
@@ -53,7 +51,7 @@ async function index(){
 
       game.initialize();
 
-      cb( game.controls, game.state );
+      cb( game.initialState, game.state );
     } );
 
     socket.on( "generateLevel", cb => {

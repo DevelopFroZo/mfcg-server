@@ -1,43 +1,45 @@
+import { randInt } from "../randInt";
+
 import { AbstractGame } from "./AbstractGame";
 
-class CenterGame extends AbstractGame {
-  private _meta: number = 0;
+const imgs = [
+  {
+    path: "/img/cat0.png",
+    x: 53,
+    y: 66
+  }
+];
+
+class CenterGame extends AbstractGame<any, boolean> {
+  private _meta: boolean = false;
 
   constructor(){
     super( {
-      controls: "yesno"
+      controls: "yesno",
+      totalScore: 10
     } );
   }
 
-  generateLevel(): [null, any] | [number, null]{
-    if( this.state.status !== "idle" ){
-      return [ 1, null ];
-    }
+  protected generateLevelNative(){
+    const img = imgs[ randInt( 0, imgs.length - 1 ) ];
+
+    const rawX = Math.random() * 2 - 1;
+    const rawY = Math.random() * 2 - 1;
+    const x = ( img.x + rawX ) / 100;
+    const y = ( img.y + rawY ) / 100;
 
     const data = {
-      xOffset: Math.random() * 2 - 1,
-      yOffset: Math.random() * 2 - 1
+      imagePath: img.path,
+      scale: { x, y }
     };
 
-    this._meta = Math.sqrt( Math.pow( data.xOffset, 2 ) + Math.pow( data.yOffset, 2 ) );
-    this.state.status = "generated";
+    this._meta = Math.sqrt( Math.pow( rawX, 2 ) + Math.pow( rawY, 2 ) ) < .5;
 
-    return [ null, data ];
+    return data;
   }
 
-  checkAnswer( answer: boolean ): null | number{
-    if( this.state.status !== "generated" ){
-      return 1;
-    }
-
-    if( this._meta < .6 === answer ){
-      this.state.score++;
-      this.state.status = "idle";
-    } else {
-      this.state.status = "ended";
-    }
-
-    return null;
+  protected checkAnswerNative( answer: boolean ): boolean{
+    return this._meta === answer;
   }
 }
 

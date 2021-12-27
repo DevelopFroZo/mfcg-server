@@ -1,9 +1,11 @@
-import { ColorsGame } from "./ColorsGame";
 import { CenterGame } from "./CenterGame";
+import { CompareColors } from "./CompareColors";
+import { ColorsGame } from "./ColorsGame";
 
 const games = {
-  colors: ColorsGame,
-  center: CenterGame
+  center: CenterGame,
+  compare_colors: CompareColors,
+  colors: ColorsGame
 };
 
 function makeGame( game: keyof typeof games ){
