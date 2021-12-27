@@ -73,10 +73,9 @@ async function index(){
 
     socket.on( "end", cb => {
       const game = games[ socketId ];
+      const totalSeconds = game.end();
 
-      game.end();
-
-      cb( game.state );
+      cb( totalSeconds, game.state );
     } );
 
     socket.on( "disconnect", () => {

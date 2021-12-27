@@ -1,13 +1,8 @@
-interface State {
-  status: string,
-  answers: number,
-  score: number
-}
-
 interface Options {
   controls?: string,
   expiresIn?: number,
-  totalScore?: number
+  totalScore?: number,
+  endOnFail?: boolean
 }
 
 abstract class AbstractGame<T = any, R = any> {
@@ -15,8 +10,8 @@ abstract class AbstractGame<T = any, R = any> {
   private _expiresIn?: number;
   private _expiresAt?: number;
   private _startAt: number = 0;
-  private _endAt: number = 0;
   private _totalScore?: number;
+  private _endOnFail: boolean;
   private _status: string = "created";
   private _answers: number = 0;
   private _score: number = 0;
@@ -28,11 +23,13 @@ abstract class AbstractGame<T = any, R = any> {
   constructor( {
     controls,
     expiresIn,
-    totalScore
+    totalScore,
+    endOnFail = false
   }: Options = {} ){
     this._controls = controls;
     this._expiresIn = expiresIn;
     this._totalScore = totalScore;
+    this._endOnFail = endOnFail;
   }
 
   get initialState(){
@@ -59,7 +56,6 @@ abstract class AbstractGame<T = any, R = any> {
     const now = Math.floor( Date.now() / 1000 );
 
     this._startAt = now;
-    this._endAt = 0;
     this._status = "idle";
     this._answers = 0;
     this._score = 0;
@@ -109,15 +105,17 @@ abstract class AbstractGame<T = any, R = any> {
     }
 
     const checkAnswerResult = this.checkAnswerNative( answer );
+    let isRight = false;
 
     if( checkAnswerResult ){
       this._score++;
+      isRight = true;
     }
 
     this._answers++;
-    
-    if( this._answers === this._totalScore ){
-      this.end();
+
+    if( this._endOnFail && !isRight || this._answers === this._totalScore ){
+      this._status = "failed";
     } else {
       this._status = "idle";
     }
@@ -125,11 +123,13 @@ abstract class AbstractGame<T = any, R = any> {
     return null;
   }
 
-  end(): void{
+  end(): number{
     const now = Math.floor( Date.now() / 1000 );
+    const totalSeconds = now - this._startAt;
 
-    this._endAt = now;
     this._status = "ended";
+
+    return totalSeconds;
   }
 }
 
