@@ -73,7 +73,7 @@ async function index(){
 
     socket.on( "end", cb => {
       const game = games[ socketId ];
-      const totalSeconds = game.end();
+      const [ error, totalSeconds ] = game.end();
 
       cb( totalSeconds, game.state );
     } );

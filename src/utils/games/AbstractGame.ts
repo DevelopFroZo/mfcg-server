@@ -123,13 +123,17 @@ abstract class AbstractGame<T = any, R = any> {
     return null;
   }
 
-  end(): number{
+  end(): [null, number] | [number, null]{
+    if( this._status === "ended" ){
+      return [ 1, null ];
+    }
+
     const now = Math.floor( Date.now() / 1000 );
     const totalSeconds = now - this._startAt;
 
     this._status = "ended";
 
-    return totalSeconds;
+    return [ null, totalSeconds ];
   }
 }
 
